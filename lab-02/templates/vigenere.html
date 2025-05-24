@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mã Hóa Vigenère</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: #f4f4f4;
+            color: #333;
+        }
+
+        .container {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            max-width: 600px;
+            margin: auto;
+        }
+
+        h1 {
+            color: #333;
+            text-align: center;
+        }
+
+        .form-section {
+            margin-bottom: 20px;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+
+        input[type="text"] {
+            width: calc(100% - 22px);
+            padding: 10px;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        button {
+            background-color: #5cb85c;
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-right: 5px;
+        }
+
+        button:hover {
+            background-color: #4cae4c;
+        }
+
+        pre {
+            background-color: #eee;
+            padding: 10px;
+            border-radius: 4px;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            min-height: 50px;
+        }
+
+        .error {
+            color: red;
+            font-weight: bold;
+        }
+
+        .home-link {
+            display: block;
+            text-align: center;
+            margin-top: 20px;
+            color: #007bff;
+            text-decoration: none;
+        }
+
+        .home-link:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>Mã Hóa/Giải Mã Vigenère</h1>
+        <div class="form-section">
+            <label for="vigenere-text">Văn bản:</label>
+            <input type="text" id="vigenere-text" placeholder="Nhập văn bản...">
+
+            <label for="vigenere-key">Khóa (chuỗi ký tự):</label>
+            <input type="text" id="vigenere-key" placeholder="Ví dụ: KEY">
+
+            <button onclick="processVigenere('encrypt')">Mã Hóa Vigenère</button>
+            <button onclick="processVigenere('decrypt')">Giải Mã Vigenère</button>
+
+            <h3>Kết quả:</h3>
+            <pre id="vigenere-result"></pre>
+        </div>
+        <a href="{{ url_for('home') }}" class="home-link">Quay lại Trang Chủ</a>
+    </div>
+
+    <script>
+        async function processVigenere(action) {
+            const text = document.getElementById('vigenere-text').value;
+            const key = document.getElementById('vigenere-key').value;
+            const resultArea = document.getElementById('vigenere-result');
+            resultArea.textContent = '';
+            resultArea.classList.remove('error');
+
+            if (!text || !key) {
+                resultArea.textContent = 'Lỗi: Vui lòng nhập đầy đủ văn bản và khóa.';
+                resultArea.classList.add('error');
+                return;
+            }
+
+            // Sử dụng URL tuyệt đối cho API endpoint
+            const apiBaseUrl = `${window.location.protocol}//${window.location.host}`;
+            const endpoint = action === 'encrypt' ? `${apiBaseUrl}/api/vigenere/encrypt` : `${apiBaseUrl}/api/vigenere/decrypt`;
+
+            try {
+                const response = await fetch(endpoint, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ text: text, key: key })
+                });
+                const data = await response.json();
+                if (response.ok) {
+                    resultArea.textContent = data.encrypted_text || data.decrypted_text || JSON.stringify(data);
+                } else {
+                    resultArea.textContent = 'Lỗi: ' + (data.error || 'Không rõ lỗi từ server.');
+                    resultArea.classList.add('error');
+                }
+            } catch (error) {
+                resultArea.textContent = 'Lỗi kết nối hoặc xử lý: ' + error.message;
+                resultArea.classList.add('error');
+            }
+        }
+    </script>
+</body>
+
+</html>
