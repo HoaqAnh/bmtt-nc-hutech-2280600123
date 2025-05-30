@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mã Hóa Rail Fence</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        
+        .gradient-bg {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        
+        .glass-card {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .input-focus {
+            transition: all 0.3s ease;
+        }
+        
+        .input-focus:focus {
+            transform: scale(1.02);
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.3);
+        }
+        
+        .button-hover {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .button-hover:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+        }
+        
+        .floating {
+            animation: floating 3s ease-in-out infinite;
+        }
+        
+        @keyframes floating {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+        }
+        
+        .slide-in {
+            animation: slideIn 0.8s ease-out forwards;
+        }
+        
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .pulse-glow {
+            animation: pulseGlow 2s ease-in-out infinite alternate;
+        }
+        
+        @keyframes pulseGlow {
+            from {
+                box-shadow: 0 0 20px rgba(102, 126, 234, 0.3);
+            }
+            to {
+                box-shadow: 0 0 30px rgba(102, 126, 234, 0.6);
+            }
+        }
+        
+        .result-appear {
+            animation: resultAppear 0.5s ease-out forwards;
+        }
+        
+        @keyframes resultAppear {
+            from {
+                opacity: 0;
+                transform: scale(0.95);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+    </style>
+</head>
+
+<body class="min-h-screen gradient-bg">
+    <div class="fixed inset-0 overflow-hidden pointer-events-none">
+        <div class="absolute top-10 left-10 w-20 h-20 bg-white bg-opacity-10 rounded-full floating"></div>
+        <div class="absolute top-32 right-20 w-16 h-16 bg-white bg-opacity-5 rounded-full floating" style="animation-delay: -1s;"></div>
+        <div class="absolute bottom-20 left-32 w-24 h-24 bg-white bg-opacity-10 rounded-full floating" style="animation-delay: -2s;"></div>
+        <div class="absolute bottom-32 right-10 w-12 h-12 bg-white bg-opacity-15 rounded-full floating" style="animation-delay: -0.5s;"></div>
+    </div>
+
+    <div class="relative z-10 min-h-screen flex flex-col">
+        <header class="pt-8 pb-6">
+            <div class="container mx-auto px-6">
+                <div class="text-center slide-in">
+                    <div class="inline-block mb-4">
+                        <div class="text-5xl floating">🛤️</div>
+                    </div>
+                    <h1 class="text-4xl md:text-5xl font-bold text-white mb-2">
+                        Mã Hóa Rail Fence
+                    </h1>
+                    <p class="text-blue-100 text-lg max-w-2xl mx-auto">
+                        Sắp xếp ký tự theo mô hình ziczac trên các "hàng rào"
+                    </p>
+                </div>
+            </div>
+        </header>
+
+        <main class="flex-1 pb-12">
+            <div class="container mx-auto px-6">
+                <div class="max-w-4xl mx-auto">
+                    <div class="glass-card rounded-3xl p-8 mb-8 slide-in pulse-glow">
+                        <div class="grid lg:grid-cols-2 gap-8">
+                            <div class="space-y-6">
+                                <h2 class="text-2xl font-semibold text-white mb-6 flex items-center">
+                                    <span class="mr-3">📝</span>
+                                    Nhập Dữ Liệu
+                                </h2>
+                                
+                                <div class="space-y-2">
+                                    <label for="railfence-text" class="block text-sm font-medium text-blue-100">
+                                        Văn bản cần mã hóa/giải mã
+                                    </label>
+                                    <textarea 
+                                        id="railfence-text" 
+                                        placeholder="Nhập văn bản của bạn tại đây..."
+                                        class="w-full h-32 px-4 py-3 bg-white bg-opacity-10 border border-white border-opacity-20 rounded-xl text-white placeholder-blue-200 input-focus focus:outline-none focus:border-opacity-40 resize-none"
+                                    ></textarea>
+                                </div>
+
+                                <div class="space-y-2">
+                                    <label for="railfence-key" class="block text-sm font-medium text-blue-100">
+                                        Số hàng rào (Key > 1)
+                                    </label>
+                                    <div class="relative">
+                                        <input 
+                                            type="number" 
+                                            id="railfence-key" 
+                                            placeholder="Ví dụ: 3"
+                                            class="w-full px-4 py-3 bg-white bg-opacity-10 border border-white border-opacity-20 rounded-xl text-white placeholder-blue-200 input-focus focus:outline-none focus:border-opacity-40"
+                                        >
+                                        <div class="absolute right-3 top-1/2 transform -translate-y-1/2 text-blue-200">
+                                            🚧
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="flex flex-col sm:flex-row gap-3 pt-4">
+                                    <button 
+                                        onclick="processRailFence('encrypt')"
+                                        class="flex-1 bg-gradient-to-r from-green-500 to-emerald-600 text-white px-6 py-3 rounded-xl font-medium button-hover flex items-center justify-center space-x-2"
+                                    >
+                                        <span>🔒</span>
+                                        <span>Mã Hóa</span>
+                                    </button>
+                                    <button 
+                                        onclick="processRailFence('decrypt')"
+                                        class="flex-1 bg-gradient-to-r from-orange-500 to-red-600 text-white px-6 py-3 rounded-xl font-medium button-hover flex items-center justify-center space-x-2"
+                                    >
+                                        <span>🔓</span>
+                                        <span>Giải Mã</span>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div class="space-y-6">
+                                <h2 class="text-2xl font-semibold text-white mb-6 flex items-center">
+                                    <span class="mr-3">✨</span>
+                                    Kết Quả
+                                </h2>
+                                
+                                <div class="space-y-2">
+                                    <label class="block text-sm font-medium text-blue-100">
+                                        Văn bản đã xử lý
+                                    </label>
+                                    <div 
+                                        id="railfence-result"
+                                        class="w-full h-32 px-4 py-3 bg-white bg-opacity-5 border border-white border-opacity-20 rounded-xl text-white overflow-y-auto whitespace-pre-wrap break-words min-h-[8rem] flex items-center justify-center text-blue-200"
+                                    >
+                                        Kết quả sẽ hiển thị tại đây...
+                                    </div>
+                                </div>
+
+                                <button 
+                                    id="copy-button"
+                                    onclick="copyResult()"
+                                    class="w-full bg-gradient-to-r from-purple-500 to-indigo-600 text-white px-6 py-3 rounded-xl font-medium button-hover flex items-center justify-center space-x-2 opacity-50 cursor-not-allowed"
+                                    disabled
+                                >
+                                    <span>📋</span>
+                                    <span>Sao Chép Kết Quả</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="grid md:grid-cols-2 gap-6 mb-8">
+                        <div class="glass-card rounded-2xl p-6 slide-in">
+                            <h3 class="text-xl font-semibold text-white mb-4 flex items-center">
+                                <span class="mr-3">🧠</span>
+                                Cách Hoạt Động
+                            </h3>
+                            <div class="text-blue-100 space-y-2 text-sm">
+                                <p>• Văn bản được viết theo đường ziczac qua số "hàng rào" (key) đã định.</p>
+                                <p>• Sau đó, đọc từng hàng rào từ trên xuống dưới để tạo bản mã.</p>
+                                <p>• Ví dụ: "HELLO" với key 3:</p>
+                                <p class="ml-4">H . . L . .</p>
+                                <p class="ml-4">. E . . O .</p>
+                                <p class="ml-4">. . L . . .</p>
+                                <p class="ml-4">→ Cipher: "HLOEL"</p>
+                            </div>
+                        </div>
+
+                        <div class="glass-card rounded-2xl p-6 slide-in">
+                            <h3 class="text-xl font-semibold text-white mb-4 flex items-center">
+                                <span class="mr-3">💡</span>
+                                Mẹo Sử Dụng
+                            </h3>
+                            <div class="text-blue-100 space-y-2 text-sm">
+                                <p>• Số hàng rào (key) phải là số nguyên lớn hơn 1.</p>
+                                <p>• Key càng lớn, việc phá mã thủ công càng khó hơn một chút.</p>
+                                <p>• Mã này tương đối yếu và dễ bị tấn công bằng phân tích tần suất.</p>
+                                <p>• Giải mã yêu cầu chính xác số hàng rào đã dùng.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="text-center slide-in">
+                        <a 
+                            href="{{ url_for('home') }}" 
+                            class="inline-flex items-center space-x-2 bg-white bg-opacity-10 text-white px-6 py-3 rounded-xl font-medium button-hover border border-white border-opacity-20"
+                        >
+                            <span>🏠</span>
+                            <span>Quay Lại Trang Chủ</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        let currentResult = '';
+
+        async function processRailFence(action) {
+            const text = document.getElementById('railfence-text').value;
+            const keyInput = document.getElementById('railfence-key');
+            const key = keyInput.value;
+            const resultArea = document.getElementById('railfence-result');
+            const copyButton = document.getElementById('copy-button');
+            
+            resultArea.textContent = '';
+            resultArea.classList.remove('text-red-400', 'text-green-400', 'text-blue-300');
+            copyButton.disabled = true;
+            copyButton.classList.add('opacity-50', 'cursor-not-allowed');
+
+            if (!text || key === '') {
+                showError('Vui lòng nhập đầy đủ văn bản và số hàng rào.', resultArea);
+                return;
+            }
+
+            const keyInt = parseInt(key);
+            if (isNaN(keyInt)) {
+                showError('Số hàng rào (key) phải là một số nguyên.', resultArea);
+                return;
+            }
+            if (keyInt < 2) {
+                showError('Số hàng rào (key) phải lớn hơn hoặc bằng 2.', resultArea);
+                return;
+            }
+            
+            resultArea.textContent = '⏳ Đang xử lý...';
+            resultArea.classList.add('text-blue-300');
+
+            const apiBaseUrl = `${window.location.protocol}//${window.location.host}`;
+            const endpoint = action === 'encrypt' ? `${apiBaseUrl}/api/railfence/encrypt` : `${apiBaseUrl}/api/railfence/decrypt`;
+
+            try {
+                const response = await fetch(endpoint, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ text: text, key: keyInt })
+                });
+                const data = await response.json();
+                if (response.ok) {
+                    const resultText = data.encrypted_text || data.decrypted_text || JSON.stringify(data);
+                    showSuccess(resultText, resultArea);
+                    currentResult = resultText;
+                    copyButton.disabled = false;
+                    copyButton.classList.remove('opacity-50', 'cursor-not-allowed');
+                } else {
+                    showError(data.error || 'Không rõ lỗi từ server.', resultArea);
+                }
+            } catch (error) {
+                showError('Lỗi kết nối hoặc xử lý: ' + error.message, resultArea);
+            }
+        }
+
+        function showError(message, element) {
+            element.textContent = '❌ ' + message;
+            element.classList.remove('text-blue-300', 'text-green-400');
+            element.classList.add('text-red-600', 'result-appear');
+        }
+
+        function showSuccess(message, element) {
+            element.textContent = message;
+            element.classList.remove('text-blue-300', 'text-red-400');
+            element.classList.add('text-green-400', 'result-appear');
+        }
+
+        function copyResult() {
+            if (currentResult) {
+                navigator.clipboard.writeText(currentResult).then(() => {
+                    const copyButton = document.getElementById('copy-button');
+                    const originalText = copyButton.innerHTML;
+                    copyButton.innerHTML = '<span>✅</span><span>Đã Sao Chép!</span>';
+                    setTimeout(() => {
+                        copyButton.innerHTML = originalText;
+                    }, 2000);
+                }).catch(err => {
+                    console.error('Không thể sao chép: ', err);
+                });
+            }
+        }
+        
+        document.addEventListener('DOMContentLoaded', (event) => {
+            document.getElementById('railfence-text').focus();
+        });
+
+        document.addEventListener('keydown', function(e) {
+            if (e.ctrlKey || e.metaKey) {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    processRailFence('encrypt'); 
+                } else if (e.key === 'e' && (e.target.tagName !== 'INPUT' && e.target.tagName !== 'TEXTAREA')) {
+                    e.preventDefault();
+                    processRailFence('encrypt');
+                } else if (e.key === 'd' && (e.target.tagName !== 'INPUT' && e.target.tagName !== 'TEXTAREA')) {
+                    e.preventDefault();
+                    processRailFence('decrypt');
+                }
+            }
+        });
+    </script>
+</body>
+</html>
