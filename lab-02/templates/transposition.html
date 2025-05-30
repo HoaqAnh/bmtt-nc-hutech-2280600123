@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mã Hóa Rail Fence</title>
+    <title>Mã Hóa Transposition</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
@@ -92,6 +92,14 @@
                 transform: scale(1);
             }
         }
+        .info {
+            font-size: 0.85em;
+            color: #c3dafe;
+            margin-bottom: 10px;
+            padding: 8px;
+            background: rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+        }
     </style>
 </head>
 
@@ -108,13 +116,13 @@
             <div class="container mx-auto px-6">
                 <div class="text-center slide-in">
                     <div class="inline-block mb-4">
-                        <div class="text-5xl floating">🛤️</div>
+                        <div class="text-5xl floating">🔄</div>
                     </div>
                     <h1 class="text-4xl md:text-5xl font-bold text-white mb-2">
-                        Mã Hóa Rail Fence
+                        Mã Hóa Transposition
                     </h1>
                     <p class="text-blue-100 text-lg max-w-2xl mx-auto">
-                        Sắp xếp ký tự theo mô hình ziczac trên các "hàng rào"
+                        Hoán vị ký tự dựa trên một từ khóa (Columnar Transposition)
                     </p>
                 </div>
             </div>
@@ -124,6 +132,7 @@
             <div class="container mx-auto px-6">
                 <div class="max-w-4xl mx-auto">
                     <div class="glass-card rounded-3xl p-8 mb-8 slide-in pulse-glow">
+                         <p class="info">Thứ tự các cột được xác định bởi thứ tự alphabet của các ký tự trong khóa. Các ký tự không phải chữ cái trong khóa sẽ bị bỏ qua.</p>
                         <div class="grid lg:grid-cols-2 gap-8">
                             <div class="space-y-6">
                                 <h2 class="text-2xl font-semibold text-white mb-6 flex items-center">
@@ -132,43 +141,43 @@
                                 </h2>
                                 
                                 <div class="space-y-2">
-                                    <label for="railfence-text" class="block text-sm font-medium text-blue-100">
+                                    <label for="transposition-text" class="block text-sm font-medium text-blue-100">
                                         Văn bản cần mã hóa/giải mã
                                     </label>
                                     <textarea 
-                                        id="railfence-text" 
+                                        id="transposition-text" 
                                         placeholder="Nhập văn bản của bạn tại đây..."
                                         class="w-full h-32 px-4 py-3 bg-white bg-opacity-10 border border-white border-opacity-20 rounded-xl text-white placeholder-blue-200 input-focus focus:outline-none focus:border-opacity-40 resize-none"
                                     ></textarea>
                                 </div>
 
                                 <div class="space-y-2">
-                                    <label for="railfence-key" class="block text-sm font-medium text-blue-100">
-                                        Số hàng rào (Key > 1)
+                                    <label for="transposition-key" class="block text-sm font-medium text-blue-100">
+                                        Khóa (chuỗi ký tự)
                                     </label>
                                     <div class="relative">
                                         <input 
-                                            type="number" 
-                                            id="railfence-key" 
-                                            placeholder="Ví dụ: 3"
+                                            type="text" 
+                                            id="transposition-key" 
+                                            placeholder="Ví dụ: CONVENIENCE"
                                             class="w-full px-4 py-3 bg-white bg-opacity-10 border border-white border-opacity-20 rounded-xl text-white placeholder-blue-200 input-focus focus:outline-none focus:border-opacity-40"
                                         >
                                         <div class="absolute right-3 top-1/2 transform -translate-y-1/2 text-blue-200">
-                                            🚧
+                                            🔑
                                         </div>
                                     </div>
                                 </div>
 
                                 <div class="flex flex-col sm:flex-row gap-3 pt-4">
                                     <button 
-                                        onclick="processRailFence('encrypt')"
+                                        onclick="processTransposition('encrypt')"
                                         class="flex-1 bg-gradient-to-r from-green-500 to-emerald-600 text-white px-6 py-3 rounded-xl font-medium button-hover flex items-center justify-center space-x-2"
                                     >
                                         <span>🔒</span>
                                         <span>Mã Hóa</span>
                                     </button>
                                     <button 
-                                        onclick="processRailFence('decrypt')"
+                                        onclick="processTransposition('decrypt')"
                                         class="flex-1 bg-gradient-to-r from-orange-500 to-red-600 text-white px-6 py-3 rounded-xl font-medium button-hover flex items-center justify-center space-x-2"
                                     >
                                         <span>🔓</span>
@@ -188,7 +197,7 @@
                                         Văn bản đã xử lý
                                     </label>
                                     <div 
-                                        id="railfence-result"
+                                        id="transposition-result"
                                         class="w-full h-32 px-4 py-3 bg-white bg-opacity-5 border border-white border-opacity-20 rounded-xl text-white overflow-y-auto whitespace-pre-wrap break-words min-h-[8rem] flex items-center justify-center text-blue-200"
                                     >
                                         Kết quả sẽ hiển thị tại đây...
@@ -215,13 +224,12 @@
                                 Cách Hoạt Động
                             </h3>
                             <div class="text-blue-100 space-y-2 text-sm">
-                                <p>• Văn bản được viết theo đường ziczac qua số "hàng rào" (key) đã định.</p>
-                                <p>• Sau đó, đọc từng hàng rào từ trên xuống dưới để tạo bản mã.</p>
-                                <p>• Ví dụ: "HELLO" với key 3:</p>
-                                <p class="ml-4">H . . L . .</p>
-                                <p class="ml-4">. E . . O .</p>
-                                <p class="ml-4">. . L . . .</p>
-                                <p class="ml-4">→ Cipher: "HLOEL"</p>
+                                <p>• Văn bản được viết vào một lưới, số cột bằng độ dài khóa.</p>
+                                <p>• Các cột được đọc ra theo thứ tự alphabet của các ký tự trong khóa.</p>
+                                <p>• Ví dụ: text "HELLO", key "KEY" (K=0, E=1, Y=2). Sắp xếp key: E, K, Y.</p>
+                                <p class="ml-4">Grid: H E L / L O W. (W là ký tự phụ nếu cần)</p>
+                                <p class="ml-4">Đọc cột E (EO), rồi K (HL), rồi Y (LW).</p>
+                                <p class="ml-4">Cipher: EOHLLW</p>
                             </div>
                         </div>
 
@@ -231,10 +239,10 @@
                                 Mẹo Sử Dụng
                             </h3>
                             <div class="text-blue-100 space-y-2 text-sm">
-                                <p>• Số hàng rào (key) phải là số nguyên lớn hơn 1.</p>
-                                <p>• Key càng lớn, việc phá mã thủ công càng khó hơn một chút.</p>
-                                <p>• Mã này tương đối yếu và dễ bị tấn công bằng phân tích tần suất.</p>
-                                <p>• Giải mã yêu cầu chính xác số hàng rào đã dùng.</p>
+                                <p>• Độ dài khóa ảnh hưởng đến cách xáo trộn ký tự.</p>
+                                <p>• Khóa có ký tự lặp lại sẽ được xử lý theo thứ tự xuất hiện.</p>
+                                <p>• Mã này có thể bị phá bằng cách thử các hoán vị cột hoặc phân tích anagram.</p>
+                                <p>• Không sử dụng ký tự phụ trong bản mã, độ dài bản mã bằng bản rõ.</p>
                             </div>
                         </div>
                     </div>
@@ -256,11 +264,10 @@
     <script>
         let currentResult = '';
 
-        async function processRailFence(action) {
-            const text = document.getElementById('railfence-text').value;
-            const keyInput = document.getElementById('railfence-key');
-            const key = keyInput.value;
-            const resultArea = document.getElementById('railfence-result');
+        async function processTransposition(action) {
+            const text = document.getElementById('transposition-text').value;
+            const key = document.getElementById('transposition-key').value;
+            const resultArea = document.getElementById('transposition-result');
             const copyButton = document.getElementById('copy-button');
             
             resultArea.textContent = '';
@@ -268,18 +275,12 @@
             copyButton.disabled = true;
             copyButton.classList.add('opacity-50', 'cursor-not-allowed');
 
-            if (!text || key === '') {
-                showError('Vui lòng nhập đầy đủ văn bản và số hàng rào.', resultArea);
+            if (!text || !key.trim()) {
+                showError('Vui lòng nhập đầy đủ văn bản và khóa.', resultArea);
                 return;
             }
-
-            const keyInt = parseInt(key);
-            if (isNaN(keyInt)) {
-                showError('Số hàng rào (key) phải là một số nguyên.', resultArea);
-                return;
-            }
-            if (keyInt < 2) {
-                showError('Số hàng rào (key) phải lớn hơn hoặc bằng 2.', resultArea);
+             if (key.trim().length === 0) { // Kiểm tra key không rỗng sau khi trim
+                showError('Khóa không được để trống.', resultArea);
                 return;
             }
             
@@ -287,13 +288,13 @@
             resultArea.classList.add('text-blue-300');
 
             const apiBaseUrl = `${window.location.protocol}//${window.location.host}`;
-            const endpoint = action === 'encrypt' ? `${apiBaseUrl}/api/railfence/encrypt` : `${apiBaseUrl}/api/railfence/decrypt`;
+            const endpoint = action === 'encrypt' ? `${apiBaseUrl}/api/transposition/encrypt` : `${apiBaseUrl}/api/transposition/decrypt`;
 
             try {
                 const response = await fetch(endpoint, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ text: text, key: keyInt })
+                    body: JSON.stringify({ text: text, key: key })
                 });
                 const data = await response.json();
                 if (response.ok) {
@@ -338,20 +339,20 @@
         }
         
         document.addEventListener('DOMContentLoaded', (event) => {
-            document.getElementById('railfence-text').focus();
+            document.getElementById('transposition-text').focus();
         });
 
         document.addEventListener('keydown', function(e) {
             if (e.ctrlKey || e.metaKey) {
                 if (e.key === 'Enter') {
                     e.preventDefault();
-                    processRailFence('encrypt'); 
+                    processTransposition('encrypt'); 
                 } else if (e.key === 'e' && (e.target.tagName !== 'INPUT' && e.target.tagName !== 'TEXTAREA')) {
                     e.preventDefault();
-                    processRailFence('encrypt');
+                    processTransposition('encrypt');
                 } else if (e.key === 'd' && (e.target.tagName !== 'INPUT' && e.target.tagName !== 'TEXTAREA')) {
                     e.preventDefault();
-                    processRailFence('decrypt');
+                    processTransposition('decrypt');
                 }
             }
         });

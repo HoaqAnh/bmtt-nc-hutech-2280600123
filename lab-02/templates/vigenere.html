@@ -5,125 +5,275 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Mã Hóa Vigenère</title>
+    <script src="https://cdn.tailwindcss.com"></script>
     <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        
         body {
-            font-family: Arial, sans-serif;
-            margin: 20px;
-            background-color: #f4f4f4;
-            color: #333;
+            font-family: 'Inter', sans-serif;
         }
-
-        .container {
-            background-color: #fff;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            max-width: 600px;
-            margin: auto;
+        
+        .gradient-bg {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
         }
-
-        h1 {
-            color: #333;
-            text-align: center;
+        
+        .glass-card {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
         }
-
-        .form-section {
-            margin-bottom: 20px;
-            padding: 15px;
-            border: 1px solid #ddd;
-            border-radius: 5px;
+        
+        .input-focus {
+            transition: all 0.3s ease;
         }
-
-        label {
-            display: block;
-            margin-bottom: 5px;
-            font-weight: bold;
+        
+        .input-focus:focus {
+            transform: scale(1.02);
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.3);
         }
-
-        input[type="text"] {
-            width: calc(100% - 22px);
-            padding: 10px;
-            margin-bottom: 10px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
+        
+        .button-hover {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
-
-        button {
-            background-color: #5cb85c;
-            color: white;
-            padding: 10px 15px;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            margin-right: 5px;
+        
+        .button-hover:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
         }
-
-        button:hover {
-            background-color: #4cae4c;
+        
+        .floating {
+            animation: floating 3s ease-in-out infinite;
         }
-
-        pre {
-            background-color: #eee;
-            padding: 10px;
-            border-radius: 4px;
-            white-space: pre-wrap;
-            word-wrap: break-word;
-            min-height: 50px;
+        
+        @keyframes floating {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
         }
-
-        .error {
-            color: red;
-            font-weight: bold;
+        
+        .slide-in {
+            animation: slideIn 0.8s ease-out forwards;
         }
-
-        .home-link {
-            display: block;
-            text-align: center;
-            margin-top: 20px;
-            color: #007bff;
-            text-decoration: none;
+        
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
-
-        .home-link:hover {
-            text-decoration: underline;
+        
+        .pulse-glow {
+            animation: pulseGlow 2s ease-in-out infinite alternate;
+        }
+        
+        @keyframes pulseGlow {
+            from {
+                box-shadow: 0 0 20px rgba(102, 126, 234, 0.3);
+            }
+            to {
+                box-shadow: 0 0 30px rgba(102, 126, 234, 0.6);
+            }
+        }
+        
+        .result-appear {
+            animation: resultAppear 0.5s ease-out forwards;
+        }
+        
+        @keyframes resultAppear {
+            from {
+                opacity: 0;
+                transform: scale(0.95);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
         }
     </style>
 </head>
 
-<body>
-    <div class="container">
-        <h1>Mã Hóa/Giải Mã Vigenère</h1>
-        <div class="form-section">
-            <label for="vigenere-text">Văn bản:</label>
-            <input type="text" id="vigenere-text" placeholder="Nhập văn bản...">
+<body class="min-h-screen gradient-bg">
+    <div class="fixed inset-0 overflow-hidden pointer-events-none">
+        <div class="absolute top-10 left-10 w-20 h-20 bg-white bg-opacity-10 rounded-full floating"></div>
+        <div class="absolute top-32 right-20 w-16 h-16 bg-white bg-opacity-5 rounded-full floating" style="animation-delay: -1s;"></div>
+        <div class="absolute bottom-20 left-32 w-24 h-24 bg-white bg-opacity-10 rounded-full floating" style="animation-delay: -2s;"></div>
+        <div class="absolute bottom-32 right-10 w-12 h-12 bg-white bg-opacity-15 rounded-full floating" style="animation-delay: -0.5s;"></div>
+    </div>
 
-            <label for="vigenere-key">Khóa (chuỗi ký tự):</label>
-            <input type="text" id="vigenere-key" placeholder="Ví dụ: KEY">
+    <div class="relative z-10 min-h-screen flex flex-col">
+        <header class="pt-8 pb-6">
+            <div class="container mx-auto px-6">
+                <div class="text-center slide-in">
+                    <div class="inline-block mb-4">
+                        <div class="text-5xl floating">📜</div>
+                    </div>
+                    <h1 class="text-4xl md:text-5xl font-bold text-white mb-2">
+                        Mã Hóa Vigenère
+                    </h1>
+                    <p class="text-blue-100 text-lg max-w-2xl mx-auto">
+                        Mã hóa đa bảng chữ cái, sử dụng một từ khóa để tăng cường bảo mật
+                    </p>
+                </div>
+            </div>
+        </header>
 
-            <button onclick="processVigenere('encrypt')">Mã Hóa Vigenère</button>
-            <button onclick="processVigenere('decrypt')">Giải Mã Vigenère</button>
+        <main class="flex-1 pb-12">
+            <div class="container mx-auto px-6">
+                <div class="max-w-4xl mx-auto">
+                    <div class="glass-card rounded-3xl p-8 mb-8 slide-in pulse-glow">
+                        <div class="grid lg:grid-cols-2 gap-8">
+                            <div class="space-y-6">
+                                <h2 class="text-2xl font-semibold text-white mb-6 flex items-center">
+                                    <span class="mr-3">📝</span>
+                                    Nhập Dữ Liệu
+                                </h2>
+                                
+                                <div class="space-y-2">
+                                    <label for="vigenere-text" class="block text-sm font-medium text-blue-100">
+                                        Văn bản cần mã hóa/giải mã
+                                    </label>
+                                    <textarea 
+                                        id="vigenere-text" 
+                                        placeholder="Nhập văn bản của bạn tại đây..."
+                                        class="w-full h-32 px-4 py-3 bg-white bg-opacity-10 border border-white border-opacity-20 rounded-xl text-white placeholder-blue-200 input-focus focus:outline-none focus:border-opacity-40 resize-none"
+                                    ></textarea>
+                                </div>
 
-            <h3>Kết quả:</h3>
-            <pre id="vigenere-result"></pre>
-        </div>
-        <a href="{{ url_for('home') }}" class="home-link">Quay lại Trang Chủ</a>
+                                <div class="space-y-2">
+                                    <label for="vigenere-key" class="block text-sm font-medium text-blue-100">
+                                        Khóa mã hóa (chuỗi ký tự)
+                                    </label>
+                                    <div class="relative">
+                                        <input 
+                                            type="text" 
+                                            id="vigenere-key" 
+                                            placeholder="Ví dụ: SECRETKEY"
+                                            class="w-full px-4 py-3 bg-white bg-opacity-10 border border-white border-opacity-20 rounded-xl text-white placeholder-blue-200 input-focus focus:outline-none focus:border-opacity-40"
+                                        >
+                                        <div class="absolute right-3 top-1/2 transform -translate-y-1/2 text-blue-200">
+                                            🔑
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="flex flex-col sm:flex-row gap-3 pt-4">
+                                    <button 
+                                        onclick="processVigenere('encrypt')"
+                                        class="flex-1 bg-gradient-to-r from-green-500 to-emerald-600 text-white px-6 py-3 rounded-xl font-medium button-hover flex items-center justify-center space-x-2"
+                                    >
+                                        <span>🔒</span>
+                                        <span>Mã Hóa</span>
+                                    </button>
+                                    <button 
+                                        onclick="processVigenere('decrypt')"
+                                        class="flex-1 bg-gradient-to-r from-orange-500 to-red-600 text-white px-6 py-3 rounded-xl font-medium button-hover flex items-center justify-center space-x-2"
+                                    >
+                                        <span>🔓</span>
+                                        <span>Giải Mã</span>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div class="space-y-6">
+                                <h2 class="text-2xl font-semibold text-white mb-6 flex items-center">
+                                    <span class="mr-3">✨</span>
+                                    Kết Quả
+                                </h2>
+                                
+                                <div class="space-y-2">
+                                    <label class="block text-sm font-medium text-blue-100">
+                                        Văn bản đã xử lý
+                                    </label>
+                                    <div 
+                                        id="vigenere-result"
+                                        class="w-full h-32 px-4 py-3 bg-white bg-opacity-5 border border-white border-opacity-20 rounded-xl text-white overflow-y-auto whitespace-pre-wrap break-words min-h-[8rem] flex items-center justify-center text-blue-200"
+                                    >
+                                        Kết quả sẽ hiển thị tại đây...
+                                    </div>
+                                </div>
+
+                                <button 
+                                    id="copy-button"
+                                    onclick="copyResult()"
+                                    class="w-full bg-gradient-to-r from-purple-500 to-indigo-600 text-white px-6 py-3 rounded-xl font-medium button-hover flex items-center justify-center space-x-2 opacity-50 cursor-not-allowed"
+                                    disabled
+                                >
+                                    <span>📋</span>
+                                    <span>Sao Chép Kết Quả</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="grid md:grid-cols-2 gap-6 mb-8">
+                        <div class="glass-card rounded-2xl p-6 slide-in">
+                            <h3 class="text-xl font-semibold text-white mb-4 flex items-center">
+                                <span class="mr-3">🧠</span>
+                                Cách Hoạt Động
+                            </h3>
+                            <div class="text-blue-100 space-y-2 text-sm">
+                                <p>• Sử dụng một từ khóa, mỗi ký tự của từ khóa xác định một phép dịch Caesar khác nhau.</p>
+                                <p>• Ví dụ: Văn bản 'H', ký tự khóa 'C' (Caesar shift 2) → 'J'.</p>
+                                <p>• Từ khóa được lặp lại nếu ngắn hơn văn bản.</p>
+                                <p>• Chỉ mã hóa chữ cái, giữ nguyên ký tự khác và hoa/thường.</p>
+                            </div>
+                        </div>
+
+                        <div class="glass-card rounded-2xl p-6 slide-in">
+                            <h3 class="text-xl font-semibold text-white mb-4 flex items-center">
+                                <span class="mr-3">💡</span>
+                                Mẹo Sử Dụng
+                            </h3>
+                            <div class="text-blue-100 space-y-2 text-sm">
+                                <p>• Chọn từ khóa dài và ngẫu nhiên để tăng độ mạnh.</p>
+                                <p>• Tránh các từ khóa dễ đoán (tên, ngày sinh).</p>
+                                <p>• Vigenère mạnh hơn Caesar nhiều.</p>
+                                <p>• Giải mã yêu cầu cùng một từ khóa chính xác.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="text-center slide-in">
+                        <a 
+                            href="{{ url_for('home') }}" 
+                            class="inline-flex items-center space-x-2 bg-white bg-opacity-10 text-white px-6 py-3 rounded-xl font-medium button-hover border border-white border-opacity-20"
+                        >
+                            <span>🏠</span>
+                            <span>Quay Lại Trang Chủ</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </main>
     </div>
 
     <script>
+        let currentResult = '';
+
         async function processVigenere(action) {
             const text = document.getElementById('vigenere-text').value;
             const key = document.getElementById('vigenere-key').value;
             const resultArea = document.getElementById('vigenere-result');
+            const copyButton = document.getElementById('copy-button');
+            
             resultArea.textContent = '';
-            resultArea.classList.remove('error');
+            resultArea.classList.remove('text-red-400', 'text-green-400', 'text-blue-300');
+             copyButton.disabled = true;
+            copyButton.classList.add('opacity-50', 'cursor-not-allowed');
 
-            if (!text || !key) {
-                resultArea.textContent = 'Lỗi: Vui lòng nhập đầy đủ văn bản và khóa.';
-                resultArea.classList.add('error');
+
+            if (!text || !key.trim()) {
+                showError('Vui lòng nhập đầy đủ văn bản và khóa.', resultArea);
                 return;
             }
+            
+            resultArea.textContent = '⏳ Đang xử lý...';
+            resultArea.classList.add('text-blue-300');
 
-            // Sử dụng URL tuyệt đối cho API endpoint
+
             const apiBaseUrl = `${window.location.protocol}//${window.location.host}`;
             const endpoint = action === 'encrypt' ? `${apiBaseUrl}/api/vigenere/encrypt` : `${apiBaseUrl}/api/vigenere/decrypt`;
 
@@ -135,17 +285,67 @@
                 });
                 const data = await response.json();
                 if (response.ok) {
-                    resultArea.textContent = data.encrypted_text || data.decrypted_text || JSON.stringify(data);
+                    const resultText = data.encrypted_text || data.decrypted_text || JSON.stringify(data);
+                    showSuccess(resultText, resultArea);
+                    currentResult = resultText;
+
+                    copyButton.disabled = false;
+                    copyButton.classList.remove('opacity-50', 'cursor-not-allowed');
                 } else {
-                    resultArea.textContent = 'Lỗi: ' + (data.error || 'Không rõ lỗi từ server.');
-                    resultArea.classList.add('error');
+                    showError(data.error || 'Không rõ lỗi từ server.', resultArea);
                 }
             } catch (error) {
-                resultArea.textContent = 'Lỗi kết nối hoặc xử lý: ' + error.message;
-                resultArea.classList.add('error');
+                showError('Lỗi kết nối hoặc xử lý: ' + error.message, resultArea);
             }
         }
+
+        function showError(message, element) {
+            element.textContent = '❌ ' + message;
+            element.classList.remove('text-blue-300', 'text-green-400');
+            element.classList.add('text-red-600', 'result-appear');
+        }
+
+        function showSuccess(message, element) {
+            element.textContent = message;
+            element.classList.remove('text-blue-300', 'text-red-400');
+            element.classList.add('text-green-400', 'result-appear');
+        }
+
+        function copyResult() {
+            if (currentResult) {
+                navigator.clipboard.writeText(currentResult).then(() => {
+                    const copyButton = document.getElementById('copy-button');
+                    const originalText = copyButton.innerHTML;
+                    copyButton.innerHTML = '<span>✅</span><span>Đã Sao Chép!</span>';
+                    
+                    setTimeout(() => {
+                        copyButton.innerHTML = originalText;
+                    }, 2000);
+                }).catch(err => {
+                    console.error('Không thể sao chép kết quả: ', err);
+                });
+            }
+        }
+        
+        document.addEventListener('DOMContentLoaded', (event) => {
+            document.getElementById('vigenere-text').focus();
+        });
+
+        document.addEventListener('keydown', function(e) {
+            if (e.ctrlKey || e.metaKey) {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    processVigenere('encrypt'); 
+                } else if (e.key === 'e' && (e.target.tagName !== 'INPUT' && e.target.tagName !== 'TEXTAREA')) {
+                    e.preventDefault();
+                    processVigenere('encrypt');
+                } else if (e.key === 'd' && (e.target.tagName !== 'INPUT' && e.target.tagName !== 'TEXTAREA')) {
+                    e.preventDefault();
+                    processVigenere('decrypt');
+                }
+            }
+        });
+
     </script>
 </body>
-
 </html>
