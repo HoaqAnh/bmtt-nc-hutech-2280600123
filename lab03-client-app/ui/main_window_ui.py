@@ -10,7 +10,6 @@
 import os
 from PyQt5 import QtCore, QtGui, QtWidgets
 
-# Đảm bảo PyQt5 có thể tìm thấy các plugin cần thiết.
 platforms_dir = os.path.join(os.path.dirname(__file__), '..', 'platforms')
 os.environ['QT_QPA_PLATFORM_PLUGIN_PATH'] = platforms_dir
 if hasattr(QtCore, 'QCoreApplication'):
@@ -40,7 +39,6 @@ class Ui_MainWindow(object):
         self.tabWidget = QtWidgets.QTabWidget(self.centralwidget)
         self.tabWidget.setObjectName("tabWidget")
         
-        # === Tab Cổ điển ===
         self.tab_caesar = self.create_cipher_tab("caesar", "Caesar")
         self.tabWidget.addTab(self.tab_caesar, "Caesar")
         self.tab_vigenere = self.create_cipher_tab("vigenere", "Vigenère")
@@ -52,11 +50,8 @@ class Ui_MainWindow(object):
         self.tab_transposition = self.create_cipher_tab("transposition", "Transposition")
         self.tabWidget.addTab(self.tab_transposition, "Transposition")
 
-        # === Tab Hiện đại ===
         self.tab_rsa = self.create_rsa_tab()
         self.tabWidget.addTab(self.tab_rsa, "RSA")
-        
-        # === Thêm Tab ECC ===
         self.tab_ecc = self.create_ecc_tab()
         self.tabWidget.addTab(self.tab_ecc, "ECC")
 
@@ -135,29 +130,21 @@ class Ui_MainWindow(object):
         gridLayout_sv.addWidget(self.rsa_btn_sign, 4, 0, 1, 1)
         gridLayout_sv.addWidget(self.rsa_btn_verify, 4, 1, 1, 1)
         gridLayout.addWidget(groupBox_sign_verify, 1, 1, 1, 1)
+        
         return tab
 
     def create_ecc_tab(self):
-        """Hàm trợ giúp để tạo tab ECC."""
         tab = QtWidgets.QWidget()
         tab.setObjectName("tab_ecc")
         gridLayout = QtWidgets.QGridLayout(tab)
-
-        # Nút tạo khóa
         self.ecc_btn_gen_keys = QtWidgets.QPushButton("Tạo cặp khóa mới (ECC NIST256p)", tab)
         gridLayout.addWidget(self.ecc_btn_gen_keys, 0, 0, 1, 1)
-        
-        # Hộp nhóm Ký/Xác thực
         groupBox_sign_verify = QtWidgets.QGroupBox("Ký & Xác thực bằng ECC", tab)
         gridLayout_sv = QtWidgets.QGridLayout(groupBox_sign_verify)
-
-        # Message to sign
         label_info = QtWidgets.QLabel("Thông điệp:", groupBox_sign_verify)
         self.ecc_text_info = QtWidgets.QTextEdit(groupBox_sign_verify)
         gridLayout_sv.addWidget(label_info, 0, 0, 1, 1)
         gridLayout_sv.addWidget(self.ecc_text_info, 1, 0, 1, 2)
-
-        # Signature
         label_sign = QtWidgets.QLabel("Chữ ký (dạng Hex):", groupBox_sign_verify)
         self.ecc_text_sign = QtWidgets.QTextEdit(groupBox_sign_verify)
         gridLayout_sv.addWidget(label_sign, 2, 0, 1, 1)

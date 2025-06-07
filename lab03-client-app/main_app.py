@@ -3,7 +3,6 @@ import requests
 from PyQt5.QtWidgets import QApplication, QMainWindow, QMessageBox
 from ui.main_window_ui import Ui_MainWindow
 
-# Địa chỉ của các server API
 API_CLASSIC_URL = "http://127.0.0.1:5000/api" 
 API_RSA_URL = "http://127.0.0.1:5001/api"     
 API_ECC_URL = "http://127.0.0.1:5002/api" 
@@ -13,12 +12,9 @@ class CipherApp(QMainWindow):
         super().__init__()
         self.ui = Ui_MainWindow()
         self.ui.setupUi(self)
-
-        # Kết nối các nút bấm với các hàm xử lý tương ứng
         self.connect_signals()
 
     def connect_signals(self):
-        """Hàm này kết nối tất cả các tín hiệu (như click chuột) với các slot (hàm xử lý)."""
         # Cổ điển
         self.ui.caesar_btn_encrypt.clicked.connect(self.handle_caesar_encrypt)
         self.ui.caesar_btn_decrypt.clicked.connect(self.handle_caesar_decrypt)
@@ -45,7 +41,6 @@ class CipherApp(QMainWindow):
 
 
     def show_message(self, title, message, icon=QMessageBox.Information):
-        """Hiển thị một hộp thoại thông báo."""
         msg_box = QMessageBox()
         msg_box.setIcon(icon)
         msg_box.setText(message)
@@ -54,7 +49,6 @@ class CipherApp(QMainWindow):
         msg_box.exec_()
 
     def call_api(self, base_url, endpoint, payload, method='POST'):
-        """Hàm chung để gọi API và xử lý kết quả."""
         try:
             url = f"{base_url}/{endpoint}"
             if method.upper() == 'POST':
@@ -71,7 +65,7 @@ class CipherApp(QMainWindow):
             self.show_message("Lỗi Mạng", f"Server tại {base_url} không phản hồi (timeout).", QMessageBox.Critical)
             return None
         except requests.exceptions.RequestException as e:
-            self.show_message("Lỗi Mạng", f"Không thể kết nối đến server API:\n{e}\n\nHãy đảm bảo bạn đã chạy đúng file server.", QMessageBox.Critical)
+            self.show_message("Lỗi Mạng", f"Không thể kết nối đến server API:\n{e}\n\nHãy đảm bảo bạn đã chạy server.", QMessageBox.Critical)
             return None
 
     # --- Các hàm xử lý cho mã hóa cổ điển ---
