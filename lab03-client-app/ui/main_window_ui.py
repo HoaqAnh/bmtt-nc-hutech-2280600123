@@ -11,8 +11,6 @@ import os
 from PyQt5 import QtCore, QtGui, QtWidgets
 
 # Đảm bảo PyQt5 có thể tìm thấy các plugin cần thiết.
-# Mã này cần được đặt SAU KHI import QtCore.
-# Logic này giúp ứng dụng tìm thấy các thư viện nền tảng khi được đóng gói (ví dụ: bằng PyInstaller).
 platforms_dir = os.path.join(os.path.dirname(__file__), '..', 'platforms')
 os.environ['QT_QPA_PLATFORM_PLUGIN_PATH'] = platforms_dir
 if hasattr(QtCore, 'QCoreApplication'):
@@ -22,7 +20,7 @@ if hasattr(QtCore, 'QCoreApplication'):
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
-        MainWindow.resize(800, 700) # Tăng chiều cao
+        MainWindow.resize(800, 700)
         font = QtGui.QFont()
         font.setFamily("Arial")
         font.setPointSize(10)
@@ -42,30 +40,25 @@ class Ui_MainWindow(object):
         self.tabWidget = QtWidgets.QTabWidget(self.centralwidget)
         self.tabWidget.setObjectName("tabWidget")
         
-        # ==================== Tab Caesar ====================
+        # === Tab Cổ điển ===
         self.tab_caesar = self.create_cipher_tab("caesar", "Caesar")
         self.tabWidget.addTab(self.tab_caesar, "Caesar")
-
-        # ==================== Tab Vigenere ====================
         self.tab_vigenere = self.create_cipher_tab("vigenere", "Vigenère")
         self.tabWidget.addTab(self.tab_vigenere, "Vigenère")
-
-        # ==================== Tab Rail Fence ====================
         self.tab_railfence = self.create_cipher_tab("railfence", "Rail Fence")
         self.tabWidget.addTab(self.tab_railfence, "Rail Fence")
-
-        # ==================== Tab Playfair ====================
         self.tab_playfair = self.create_cipher_tab("playfair", "Playfair")
         self.tabWidget.addTab(self.tab_playfair, "Playfair")
-
-        # ==================== Tab Transposition ====================
         self.tab_transposition = self.create_cipher_tab("transposition", "Transposition")
         self.tabWidget.addTab(self.tab_transposition, "Transposition")
 
-        # ==================== Thêm Tab RSA ====================
+        # === Tab Hiện đại ===
         self.tab_rsa = self.create_rsa_tab()
         self.tabWidget.addTab(self.tab_rsa, "RSA")
-
+        
+        # === Thêm Tab ECC ===
+        self.tab_ecc = self.create_ecc_tab()
+        self.tabWidget.addTab(self.tab_ecc, "ECC")
 
         self.verticalLayout.addWidget(self.tabWidget)
         MainWindow.setCentralWidget(self.centralwidget)
@@ -78,123 +71,105 @@ class Ui_MainWindow(object):
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
     def create_cipher_tab(self, name, title):
-        """Hàm trợ giúp để tạo một tab cho các thuật toán mã hóa cổ điển."""
         tab = QtWidgets.QWidget()
         tab.setObjectName(f"tab_{name}")
-        
         gridLayout = QtWidgets.QGridLayout(tab)
         gridLayout.setObjectName(f"gridLayout_{name}")
-        
-        # Plain text
-        label_plain = QtWidgets.QLabel(tab)
-        label_plain.setObjectName(f"{name}_label_plain")
+        label_plain = QtWidgets.QLabel(f"Văn bản gốc (Plaintext):", tab)
         gridLayout.addWidget(label_plain, 0, 0, 1, 1)
-        
         text_edit_plain = QtWidgets.QTextEdit(tab)
-        text_edit_plain.setObjectName(f"{name}_text_plain")
         gridLayout.addWidget(text_edit_plain, 1, 0, 1, 2)
-        
-        # Key
-        label_key = QtWidgets.QLabel(tab)
-        label_key.setObjectName(f"{name}_label_key")
+        label_key = QtWidgets.QLabel("Khóa (Key):", tab)
         gridLayout.addWidget(label_key, 2, 0, 1, 1)
-        
         line_edit_key = QtWidgets.QLineEdit(tab)
-        line_edit_key.setObjectName(f"{name}_line_key")
         gridLayout.addWidget(line_edit_key, 2, 1, 1, 1)
-        
-        # Cipher text
-        label_cipher = QtWidgets.QLabel(tab)
-        label_cipher.setObjectName(f"{name}_label_cipher")
+        label_cipher = QtWidgets.QLabel("Văn bản mã hóa (Ciphertext):", tab)
         gridLayout.addWidget(label_cipher, 3, 0, 1, 1)
-        
         text_edit_cipher = QtWidgets.QTextEdit(tab)
-        text_edit_cipher.setObjectName(f"{name}_text_cipher")
         gridLayout.addWidget(text_edit_cipher, 4, 0, 1, 2)
-        
-        # Buttons
-        button_encrypt = QtWidgets.QPushButton(tab)
-        button_encrypt.setObjectName(f"{name}_btn_encrypt")
+        button_encrypt = QtWidgets.QPushButton(f"Mã hóa {title}", tab)
         gridLayout.addWidget(button_encrypt, 5, 0, 1, 1)
-        
-        button_decrypt = QtWidgets.QPushButton(tab)
-        button_decrypt.setObjectName(f"{name}_btn_decrypt")
+        button_decrypt = QtWidgets.QPushButton(f"Giải mã {title}", tab)
         gridLayout.addWidget(button_decrypt, 5, 1, 1, 1)
         
-        # Gán các widget vào thuộc tính của class để truy cập từ bên ngoài
         setattr(self, f"{name}_text_plain", text_edit_plain)
         setattr(self, f"{name}_line_key", line_edit_key)
         setattr(self, f"{name}_text_cipher", text_edit_cipher)
         setattr(self, f"{name}_btn_encrypt", button_encrypt)
         setattr(self, f"{name}_btn_decrypt", button_decrypt)
-
-        # Đặt tên cho các label
-        label_plain.setText("Văn bản gốc (Plaintext):")
-        label_key.setText("Khóa (Key):")
-        label_cipher.setText("Văn bản mã hóa (Ciphertext):")
-        button_encrypt.setText(f"Mã hóa {title}")
-        button_decrypt.setText(f"Giải mã {title}")
         
         return tab
 
     def create_rsa_tab(self):
-        """Hàm trợ giúp để tạo tab RSA."""
         tab = QtWidgets.QWidget()
-        tab.setObjectName("tab_rsa")
         gridLayout = QtWidgets.QGridLayout(tab)
-        gridLayout.setObjectName("gridLayout_rsa")
-
-        # Nút tạo khóa
-        self.rsa_btn_gen_keys = QtWidgets.QPushButton("Tạo cặp khóa mới (2048-bit)", tab)
-        self.rsa_btn_gen_keys.setObjectName("rsa_btn_gen_keys")
+        self.rsa_btn_gen_keys = QtWidgets.QPushButton("Tạo cặp khóa mới (RSA 2048-bit)", tab)
         gridLayout.addWidget(self.rsa_btn_gen_keys, 0, 0, 1, 2)
-
-        # Hộp nhóm mã hóa/giải mã
         groupBox_encrypt_decrypt = QtWidgets.QGroupBox("Mã hóa & Giải mã", tab)
         gridLayout_ed = QtWidgets.QGridLayout(groupBox_encrypt_decrypt)
-
-        # Plain text
         label_plain = QtWidgets.QLabel("Văn bản gốc:", groupBox_encrypt_decrypt)
         self.rsa_text_plain = QtWidgets.QTextEdit(groupBox_encrypt_decrypt)
         gridLayout_ed.addWidget(label_plain, 0, 0, 1, 1)
         gridLayout_ed.addWidget(self.rsa_text_plain, 1, 0, 1, 2)
-
-        # Cipher text
         label_cipher = QtWidgets.QLabel("Văn bản mã hóa (dạng Hex):", groupBox_encrypt_decrypt)
         self.rsa_text_cipher = QtWidgets.QTextEdit(groupBox_encrypt_decrypt)
         gridLayout_ed.addWidget(label_cipher, 2, 0, 1, 1)
         gridLayout_ed.addWidget(self.rsa_text_cipher, 3, 0, 1, 2)
-        
         self.rsa_btn_encrypt = QtWidgets.QPushButton("Mã hóa (với Public Key)", groupBox_encrypt_decrypt)
         self.rsa_btn_decrypt = QtWidgets.QPushButton("Giải mã (với Private Key)", groupBox_encrypt_decrypt)
         gridLayout_ed.addWidget(self.rsa_btn_encrypt, 4, 0, 1, 1)
         gridLayout_ed.addWidget(self.rsa_btn_decrypt, 4, 1, 1, 1)
         gridLayout.addWidget(groupBox_encrypt_decrypt, 1, 0, 1, 1)
-
-        # Hộp nhóm Ký/Xác thực
         groupBox_sign_verify = QtWidgets.QGroupBox("Ký & Xác thực", tab)
         gridLayout_sv = QtWidgets.QGridLayout(groupBox_sign_verify)
-
-        # Message to sign
         label_info = QtWidgets.QLabel("Thông điệp:", groupBox_sign_verify)
         self.rsa_text_info = QtWidgets.QTextEdit(groupBox_sign_verify)
         gridLayout_sv.addWidget(label_info, 0, 0, 1, 1)
         gridLayout_sv.addWidget(self.rsa_text_info, 1, 0, 1, 2)
-
-        # Signature
         label_sign = QtWidgets.QLabel("Chữ ký (dạng Hex):", groupBox_sign_verify)
         self.rsa_text_sign = QtWidgets.QTextEdit(groupBox_sign_verify)
         gridLayout_sv.addWidget(label_sign, 2, 0, 1, 1)
         gridLayout_sv.addWidget(self.rsa_text_sign, 3, 0, 1, 2)
-        
         self.rsa_btn_sign = QtWidgets.QPushButton("Ký (với Private Key)", groupBox_sign_verify)
         self.rsa_btn_verify = QtWidgets.QPushButton("Xác thực (với Public Key)", groupBox_sign_verify)
         gridLayout_sv.addWidget(self.rsa_btn_sign, 4, 0, 1, 1)
         gridLayout_sv.addWidget(self.rsa_btn_verify, 4, 1, 1, 1)
         gridLayout.addWidget(groupBox_sign_verify, 1, 1, 1, 1)
-        
         return tab
 
+    def create_ecc_tab(self):
+        """Hàm trợ giúp để tạo tab ECC."""
+        tab = QtWidgets.QWidget()
+        tab.setObjectName("tab_ecc")
+        gridLayout = QtWidgets.QGridLayout(tab)
+
+        # Nút tạo khóa
+        self.ecc_btn_gen_keys = QtWidgets.QPushButton("Tạo cặp khóa mới (ECC NIST256p)", tab)
+        gridLayout.addWidget(self.ecc_btn_gen_keys, 0, 0, 1, 1)
+        
+        # Hộp nhóm Ký/Xác thực
+        groupBox_sign_verify = QtWidgets.QGroupBox("Ký & Xác thực bằng ECC", tab)
+        gridLayout_sv = QtWidgets.QGridLayout(groupBox_sign_verify)
+
+        # Message to sign
+        label_info = QtWidgets.QLabel("Thông điệp:", groupBox_sign_verify)
+        self.ecc_text_info = QtWidgets.QTextEdit(groupBox_sign_verify)
+        gridLayout_sv.addWidget(label_info, 0, 0, 1, 1)
+        gridLayout_sv.addWidget(self.ecc_text_info, 1, 0, 1, 2)
+
+        # Signature
+        label_sign = QtWidgets.QLabel("Chữ ký (dạng Hex):", groupBox_sign_verify)
+        self.ecc_text_sign = QtWidgets.QTextEdit(groupBox_sign_verify)
+        gridLayout_sv.addWidget(label_sign, 2, 0, 1, 1)
+        gridLayout_sv.addWidget(self.ecc_text_sign, 3, 0, 1, 2)
+        
+        self.ecc_btn_sign = QtWidgets.QPushButton("Ký (với Private Key)", groupBox_sign_verify)
+        self.ecc_btn_verify = QtWidgets.QPushButton("Xác thực (với Public Key)", groupBox_sign_verify)
+        gridLayout_sv.addWidget(self.ecc_btn_sign, 4, 0, 1, 1)
+        gridLayout_sv.addWidget(self.ecc_btn_verify, 4, 1, 1, 1)
+        gridLayout.addWidget(groupBox_sign_verify, 1, 0, 1, 1)
+        
+        return tab
 
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
@@ -206,13 +181,4 @@ class Ui_MainWindow(object):
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_playfair), _translate("MainWindow", "Playfair"))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_transposition), _translate("MainWindow", "Transposition"))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_rsa), _translate("MainWindow", "RSA"))
-
-
-if __name__ == "__main__":
-    import sys
-    app = QtWidgets.QApplication(sys.argv)
-    MainWindow = QtWidgets.QMainWindow()
-    ui = Ui_MainWindow()
-    ui.setupUi(MainWindow)
-    MainWindow.show()
-    sys.exit(app.exec_())
+        self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_ecc), _translate("MainWindow", "ECC"))
