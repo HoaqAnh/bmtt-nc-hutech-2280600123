@@ -11,22 +11,22 @@ Mục tiêu của kho lưu trữ này là:
 
 ## Các chủ đề và bài thực hành đã thực hiện
 
-### **Bài 1: LẬP TRÌNH CƠ BẢN VỚI PYTHON**
+### **Bài 1: Lập trình cơ bản với Python**
 * Ôn tập các khái niệm cốt lõi của Python.
 * Lập trình hướng đối tượng (OOP) trong Python.
 
-### **Bài 2: MÃ HOÁ VỚI PYTHON**
+### **Bài 2: Mã hóa với Python**
 * Triển khai các thuật toán mã hóa cổ điển: Caesar, Vigenère, Rail Fence, Playfair, Transposition.
 * Xây dựng API server bằng **Flask** để cung cấp các dịch vụ mã hóa/giải mã.
 
-### **Bài 3: LẬP TRÌNH GIAO DIỆN ỨNG DỤNG BẢO MẬT**
+### **Bài 3: Lập trình giao diện ứng dụng bảo mật**
 * Xây dựng ứng dụng Desktop với giao diện đồ họa (GUI) bằng **PyQt5**.
 * Triển khai các thuật toán mã hóa bất đối xứng:
     * **RSA**: Tạo khóa, mã hóa/giải mã, ký/xác thực chữ ký số.
     * **ECC**: Tạo khóa, ký/xác thực chữ ký số.
 * Thiết kế kiến trúc Client-Server, trong đó ứng dụng GUI (client) giao tiếp với các API server (Flask) để thực hiện các tác vụ mã hóa.
 
-### **Bài 4: SOCKET, WEBSOCKET, TRAO ĐỔI KHÓA VÀ HÀM BĂM**
+### **Bài 4: Socket, Websocket, Trao đổi khóa và hàm băm**
 * Socket:
     * Xây dựng ứng dụng chat client-server.
     * Sử dụng **RSA** để trao đổi khóa **AES** một cách an toàn.
@@ -45,33 +45,20 @@ Mục tiêu của kho lưu trữ này là:
 
 ## Cấu trúc Thư mục
 
-Dự án được tổ chức theo các thư mục tương ứng với mỗi bài thực hành, mô phỏng các ứng dụng thực tế.
 ```bash
 .
-├── lab-02/                       # Server cho các mã hóa cổ điển
+├── lab-02/
 │   ├── ciphers/
 │   ├── templates/
 │   ├── app.py
 │   └── requirements.txt
 │
-├── lab03-rsa-server/             # Server cho các chức năng của RSA
-│   ├── keys/
-│   ├── api_server_rsa.py
-│   └── requirements.txt
+├── lab-03/
+│   ├── lab03-rsa-server/
+│   ├── lab03-ecc-server/
+│   └── lab03-client-app/
 │
-├── lab03-ecc-server/             # Server cho các chức năng của ECC
-│   ├── keys/
-│   ├── api_server_ecc.py
-│   └── requirements.txt
-│
-├── lab03-client-app/             # Ứng dụng Client chính có giao diện
-├── ui/
-│   └── main_window_ui.py
-├── platforms/
-├── main_app.py
-├── requirements.txt
-│
-└── lab-04/                       # Chứa các bài thực hành của Bài 4
+└── lab-04/
     ├── aes_rsa_socket_server/
     ├── aes_rsa_socket_client_ui/
     ├── dh_key_pair_server/
@@ -100,84 +87,6 @@ Dự án được tổ chức theo các thư mục tương ứng với mỗi bà
     pip install -r requirements.txt
     ```
     Lưu ý: Mỗi thư mục con trong `lab-04` đều có file `requirements.txt` riêng.
-
-## Cài đặt & Chuẩn bị môi trường
-
-Khởi động các server trước khi chạy ứng dụng client tương ứng. Hãy mở các cửa sổ Terminal riêng biệt cho mỗi thành phần.
-
-### **Chạy các ứng dụng của Bài 2 & 3**
-
-1.  **Chạy Server Mã hóa Cổ điển (Cổng 5000):**
-    ```bash
-    cd lab-02
-    python app.py
-    ```
-
-2.  **Chạy Server RSA (Cổng 5001):**
-    ```bash
-    cd lab03-rsa-server
-    python api_server_rsa.py
-    ```
-
-3.  **Chạy Server ECC (Cổng 5002):**
-    ```bash
-    cd lab03-ecc-server
-    python api_server_ecc.py
-    ```
-
-4.  **Chạy Ứng dụng Client cho Bài 3:**
-    Sau khi cả ba server đã khởi động, mở một Terminal mới, di chuyển đến thư mục `lab03-client-app` và chạy:
-    ```bash
-    cd lab03-client-app
-    python main_app.py
-    ```
-
-### **Chạy các ứng dụng của Bài 4**
-
-1.  **Ứng dụng Chat Socket (AES + RSA):**
-* Chạy Server:
-    ```bash
-    cd lab03-client-app
-    python main_app.py
-    ```
-
-* Chạy Client (mở nhiều client trong các terminal khác nhau):
-    ```bash
-    cd lab-04/aes_rsa_socket_client_ui
-    python client_app.py
-    ```
-
-2.  **Ứng dụng Trao đổi khóa Diffie-Hellman:**
-* Chạy Server:
-    ```bash
-    cd lab-04/dh_key_pair_server
-    python server_dh.py
-    ```
-
-* Chạy Client:
-    ```bash
-    cd lab-04/dh_key_pair_client_ui
-    python client_app_dh.py
-    ```
-
-3.  **Ứng dụng Hàm băm:**
-    ```bash
-    cd lab-04/hash_functions_ui
-    python hash_app.py
-    ```
-
-4.  **Ứng dụng Chat WebSocket (Tornado + AES):**
-* Chạy Server:
-    ```bash
-    cd lab-04/websocket_aes_server
-    python server_websocket_aes.py
-    ```
-
-* Chạy Client:
-    ```bash
-    cd lab-04/websocket_aes_client_ui
-    python client_app_websocket.py
-    ```
 
 ---
 
