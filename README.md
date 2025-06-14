@@ -11,25 +11,23 @@ Mục tiêu của kho lưu trữ này là:
 
 ## Các chủ đề và bài thực hành đã thực hiện
 
-Repository này bao gồm việc triển khai các khái niệm và thuật toán sau:
-
-### **Bài 1: Lập trình Python cơ bản**
+### **Bài 1: LẬP TRÌNH CƠ BẢN VỚI PYTHON**
 * Ôn tập các khái niệm cốt lõi của Python.
 * Lập trình hướng đối tượng (OOP) trong Python.
 
-### **Bài 2: Mã hóa Cổ điển với Python**
+### **Bài 2: MÃ HOÁ VỚI PYTHON**
 * Triển khai các thuật toán mã hóa cổ điển: Caesar, Vigenère, Rail Fence, Playfair, Transposition.
 * Xây dựng API server bằng **Flask** để cung cấp các dịch vụ mã hóa/giải mã.
 
-### **Bài 3: Lập trình Giao diện và Mã hóa Hiện đại**
+### **Bài 3: LẬP TRÌNH GIAO DIỆN ỨNG DỤNG BẢO MẬT**
 * Xây dựng ứng dụng Desktop với giao diện đồ họa (GUI) bằng **PyQt5**.
 * Triển khai các thuật toán mã hóa bất đối xứng:
     * **RSA**: Tạo khóa, mã hóa/giải mã, ký/xác thực chữ ký số.
     * **ECC**: Tạo khóa, ký/xác thực chữ ký số.
 * Thiết kế kiến trúc Client-Server, trong đó ứng dụng GUI (client) giao tiếp với các API server (Flask) để thực hiện các tác vụ mã hóa.
 
-### **Bài 4: Lập trình Mạng An toàn và Các Khái niệm Nâng cao**
-* Lập trình Socket:
+### **Bài 4: SOCKET, WEBSOCKET, TRAO ĐỔI KHÓA VÀ HÀM BĂM**
+* Socket:
     * Xây dựng ứng dụng chat client-server.
     * Sử dụng **RSA** để trao đổi khóa **AES** một cách an toàn.
     * Mã hóa toàn bộ phiên trò chuyện bằng **AES**.
@@ -92,7 +90,7 @@ Dự án được tổ chức theo các thư mục tương ứng với mỗi bà
 
 1.  **Clone repository:**
     ```bash
-    git clone [https://github.com/HoaqAnh/bmtt-nc-hutech-2280600123.git](https://github.com/HoaqAnh/bmtt-nc-hutech-2280600123.git)
+    git clone https://github.com/HoaqAnh/bmtt-nc-hutech-2280600123.git
     cd bmtt-nc-hutech-2280600123
     ```
 
@@ -137,26 +135,26 @@ Khởi động các server trước khi chạy ứng dụng client tương ứng
 ### **Chạy các ứng dụng của Bài 4**
 
 1.  **Ứng dụng Chat Socket (AES + RSA):**
-    * Chạy Server:
+* Chạy Server:
     ```bash
     cd lab03-client-app
     python main_app.py
     ```
 
-    * Chạy Client (mở nhiều client trong các terminal khác nhau):
+* Chạy Client (mở nhiều client trong các terminal khác nhau):
     ```bash
     cd lab-04/aes_rsa_socket_client_ui
     python client_app.py
     ```
 
 2.  **Ứng dụng Trao đổi khóa Diffie-Hellman:**
-    * Chạy Server:
+* Chạy Server:
     ```bash
     cd lab-04/dh_key_pair_server
     python server_dh.py
     ```
 
-    * Chạy Client:
+* Chạy Client:
     ```bash
     cd lab-04/dh_key_pair_client_ui
     python client_app_dh.py
@@ -169,13 +167,13 @@ Khởi động các server trước khi chạy ứng dụng client tương ứng
     ```
 
 4.  **Ứng dụng Chat WebSocket (Tornado + AES):**
-    * Chạy Server:
+* Chạy Server:
     ```bash
     cd lab-04/websocket_aes_server
     python server_websocket_aes.py
     ```
 
-    * Chạy Client:
+* Chạy Client:
     ```bash
     cd lab-04/websocket_aes_client_ui
     python client_app_websocket.py
